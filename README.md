@@ -1,3 +1,1 @@
-# unsup
-# cw_emulator
-# cw_emulator
+# CW emulator in 2D
