@@ -1,9 +1,9 @@
 from torch import nn
 
 
-class Emulator(nn.Module):
+class EmulatorNet(nn.Module):
     def __init__(self, n_params, pix_size=256, filters=8):
-        super(Emulator, self).__init__()
+        super(EmulatorNet, self).__init__()
 
         self.filters = filters
         self.pix_size = pix_size
@@ -36,43 +36,3 @@ class Emulator(nn.Module):
         x = self.conv5(x)
 
         return x
-        
-
-class Test_CNN(nn.Module):
-    def __init__(self, n_channels, filters=8):
-        super(Test_CNN, self).__init__()
-
-        self.dense1 = nn.Linear(n_channels, 16)
-        self.dense2 = nn.Linear(16, 128)
-        self.dense3 = nn.Linear(128, 10*filters*8)
-
-        self.act = nn.SELU()
-        self.transp = nn.Upsample(scale_factor=2, mode='linear')
-        #self.upconv1 = nn.ConvTranspose1d(filters*8, filters*4, 2)
-        self.conv1 = nn.Conv1d(filters*8, filters*4, 3, padding=int((3-1)/2), padding_mode='reflect')
-        #self.upconv2 = nn.ConvTranspose1d(filters*4, filters*2, 2)
-        self.conv2 = nn.Conv1d(filters*4, filters*2, 3, padding=int((3-1)/2), padding_mode='reflect')
-        #self.upconv3 = nn.ConvTranspose1d(filters*2, filters, 2)
-        self.conv3 = nn.Conv1d(filters*2, filters, 3, padding=int((3-1)/2), padding_mode='reflect')
-        self.conv4 = nn.Conv1d(filters, 1, 1)
-
-    def forward(self, x):
-
-        x = self.act(self.dense1(x))
-        #print(x.size())
-        x = self.act(self.dense2(x))
-        #print(x.size())
-        x = self.act(self.dense3(x))#[:,:,None]
-        #print(x.size())
-        x = x.reshape(x.shape[0], 64, 10)
-        #print(x.size())
-        x = self.act(self.conv1(self.transp(x)))
-        #print(x.size())
-        x = self.act(self.conv2(self.transp(x)))
-        #print(x.size())
-        x = self.act(self.conv3(self.transp(x)))
-        #print(x.size())
-        x = self.conv4(x)
-        #print(x.size())
-
-        return x[:,0]
